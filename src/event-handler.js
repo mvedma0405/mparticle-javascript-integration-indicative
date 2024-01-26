@@ -16,20 +16,23 @@ A non-ecommerce event has the following schema:
 function EventHandler(common) {
     this.common = common || {};
 }
-EventHandler.prototype.logEvent = function(event) {};
-EventHandler.prototype.logError = function(event) {
-    // The schema for a logError event is the same, but noteworthy differences are as follows:
-    // {
-    //     EventAttributes: {m: 'name of error passed into MP', s: "Error", t: 'stack trace in string form if applicable'},
-    //     EventName: "Error"
-    // }
+EventHandler.prototype.logEvent = function (event) {
+    // console.log(`here is the ${event} from mParticle`)
+    console.log(event)
+    if (event.EventName === 'Registration Submit') {
+        mParticle.logEvent(
+            'User Alias',
+            mParticle.EventType.Other,
+            {
+                'anonymous_mpid': `${mParticle?.Identity?.getUsers?.()[1]?.getMPID()}`,
+                'known_mpid': `${mParticle?.Identity?.getCurrentUser?.().getMPID()}`
+            }
+        );
+    }
 };
-EventHandler.prototype.logPageView = function(event) {
-    /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
-        {
-            EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
-        }
-        */
+EventHandler.prototype.logError = function (event) {
+};
+EventHandler.prototype.logPageView = function (event) {
 };
 
 module.exports = EventHandler;
